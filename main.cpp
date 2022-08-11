@@ -6,7 +6,7 @@ using json = nlohmann::json;
 
 int main()
 {
-	std::ifstream f("example.json");
+	std::ifstream f("..\\..\\..\\example.json");
 	if (f.fail()) return 1; //Если файл не найден
 	json data = json::parse(f);
 	if(data["active"])
