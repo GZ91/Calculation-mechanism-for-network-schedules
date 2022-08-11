@@ -10,19 +10,20 @@ add_executable(VC_Develop "main.cpp")
 
 target_include_directories(
     VC_Develop PRIVATE
-    "C:\\my\\library\\nlohmann\\include"
+	${NLOHMANNDIR}
+    #"C:\\my\\library\\nlohmann\\include"
 )
 # Add googletest to the include directories for the test target
-target_include_directories(
-    VC_Develop PRIVATE
-    "C:\\my\\library\\nlohmann\\"
-)
+#target_include_directories(
+#    VC_Develop PRIVATE
+#    "C:\\my\\library\\nlohmann\\"
+#)
 
 # Link test target against gtest libraries
-target_link_libraries(
-    VC_Develop PRIVATE
-    "C:\\my\\library\\nlohmann"
-)
+#target_link_libraries(
+#    VC_Develop PRIVATE
+#    "C:\\my\\library\\nlohmann"
+#)
 
 
 

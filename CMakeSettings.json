@@ -9,7 +9,7 @@
       "installRoot": "${projectDir}\\out\\install\\${name}",
       "buildCommandArgs": "-v",
       "ctestCommandArgs": "",
-      "cmakeCommandArgs": "-DNLOHMANNROOT=C:/my/library/nlohmann"
+      "cmakeCommandArgs": "-DNLOHMANNDIR=C:\\my\\library\\nlohmann\\include"
     }
   ]
 }
