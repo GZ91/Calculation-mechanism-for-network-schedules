@@ -6,7 +6,7 @@ project (NC_Develop)
 
 find_package(nlohmann_json)
 
-add_executable(NC_Develop "main.cpp")
+add_executable(NC_Develop "main.cpp" "task.hpp")
 
 target_include_directories(
     NC_Develop PRIVATE
