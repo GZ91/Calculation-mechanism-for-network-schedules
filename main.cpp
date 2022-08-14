@@ -5,6 +5,7 @@
 #include "task.hpp"
 #include "util.hpp"
 #include "log.hpp"
+#include "tree.hpp"
 
 
 
@@ -27,7 +28,7 @@ void time_method() {
 
 
 
-
+	tree::link_elements(tasks_map);
 	///
 	for (auto link : tasks_map) {
 		delete link.second;

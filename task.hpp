@@ -42,20 +42,11 @@ public:
 		begin_NRCH = convert_json_in_tm(task_json[u8"МаксФакт"]);
 	};
 
-	~Task() {
-		for (auto link : predecessors)
-		{
-			delete link;
-		}
-		for (auto link : followers)
-		{
-			delete link;
-		}
-	}
 
 	std::string get_key() {
 		return ID;
 	}
+
 
 	std::vector<TaskAndType*>& get_followers() {
 		return followers;
