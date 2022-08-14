@@ -18,12 +18,11 @@ void time_method() {
 	auto tasks_json = data[u8"Операции"];
 	set_task tasks_map;
 	for (auto task_json : tasks_json) {
-		uint lendth = task_json[u8"ДлитВМин"];
-		std::string str_key = static_cast<std::string>(task_json[u8"КодОп"]);
-		ull ull_key = stoull(str_key);
-		std::string key_calendar = static_cast<std::string>(task_json[u8"КодКалендаря"]);
-		Task* task = new Task(lendth, ull_key, key_calendar);
-		tasks_map[std::stoi(str_key)] = task;
+
+
+
+		Task* task = new Task(task_json[u8"ДлитВМин"], task_json[u8"КодОп"], task_json[u8"КодКалендаря"], task_json[u8"УрВлож"], task_json[u8"Сум"]);
+		tasks_map[task_json[u8"КодОп"]] = task;
 	}
 }
 

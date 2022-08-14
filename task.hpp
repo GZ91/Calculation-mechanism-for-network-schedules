@@ -10,7 +10,7 @@ enum class TypeBond;
 using json = nlohmann::json;
 using ull = unsigned long long;
 using uint = unsigned int;
-using set_task = std::map<ull, Task*>;
+using set_task = std::map<std::string, Task*>;
 
 struct TaskAndType {
 	Task* task;
@@ -21,7 +21,15 @@ enum class TypeBond { start_start, start_finish, finish_start, finish_finish };
 
 class Task {
 public:
-	Task(uint lendth, ull ID, std::string key_calen) :lendth{ lendth }, ID{ ID }, its_critical_task{ false }, key_calendate{ key_calen } {};
+	Task(json &_lendth, json &_ID, json &_key_calen, json &_NestingLvl, json &_sum)
+	{
+		lendth = static_cast<uint>(_lendth);
+		ID = static_cast<std::string>(_ID);
+		key_calendate = static_cast<std::string>(_key_calen);
+		NestingLevel = static_cast<uint>(_NestingLvl);
+		uint sum_int = static_cast<uint>(_sum);
+		sum = static_cast<bool>(sum_int);
+	};
 
 	std::vector<TaskAndType*>& get_followers() {
 		return followers;
@@ -43,7 +51,8 @@ private:
 
 	std::string key_calendate;
 	bool its_critical_task;
-
+	uint NestingLevel;
+	bool sum;
 	uint lendth;
 	std::tm time_start;
 	std::tm time_end;
@@ -53,5 +62,5 @@ private:
 
 	std::vector <TaskAndType*> followers;
 	std::vector <ull> predecessors;
-	ull ID;
+	std::string ID;
 };
