@@ -19,9 +19,7 @@ void time_method() {
 	set_task tasks_map;
 	for (auto task_json : tasks_json) {
 
-
-
-		Task* task = new Task(task_json[u8"ДлитВМин"], task_json[u8"КодОп"], task_json[u8"КодКалендаря"], task_json[u8"УрВлож"], task_json[u8"Сум"]);
+		Task* task = new Task(task_json);
 		tasks_map[task_json[u8"КодОп"]] = task;
 	}
 }
