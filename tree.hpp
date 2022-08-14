@@ -2,7 +2,7 @@
 #include "task.hpp"
 
 namespace tree {
-	void link_elements(set_task s_tasks)
+	void link_elements(set_task s_tasks) // Связываем элементы - заполняем ссылки в предшественниках и в них же заполняем последователя - текущую ссылку на задачу.
 	{
 		for (auto task_map : s_tasks) {
 			auto predecessors = task_map.second->get_predecessors();
@@ -17,7 +17,7 @@ namespace tree {
 		}
 	}
 
-	std::vector<Task*> tasks_not_prev(set_task s_tasks) {
+	std::vector<Task*> tasks_not_prev(set_task s_tasks) { // Возвращает вектор задач без предшественников
 		std::vector<Task*> tasks_ret;
 		for (auto task_map : s_tasks) {
 			if (task_map.second->its_not_prev_task())
@@ -28,9 +28,12 @@ namespace tree {
 		return tasks_ret;
 	}
 
-	void fill_time(std::vector<Task*> s_tasks) {
+	void fill_time(std::vector<Task*> s_tasks, json date_plan) { // по задумке эта функция должна заполнять время в задачах, но нужно разобраться с алгоритмом заполнения. Ещё раз всё продумать
 		for (auto task : s_tasks) {
-			task->fill_time();			
+			std::tm tm_date_plan = util::dt_from_str(date_plan);
+			task->set_time_start_end(tm_date_plan);
+			task->fill_time();
+
 		}
 	}
 	

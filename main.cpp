@@ -28,7 +28,7 @@ void time_method() {
 
 	std::vector<Task*> tasks_not_prev = tree::tasks_not_prev(tasks_map);
 
-	tree::fill_time(tasks_not_prev);
+	tree::fill_time(tasks_not_prev, date_plan);
 	///
 	for (auto link : tasks_map) {
 		delete link.second;
@@ -52,15 +52,17 @@ int main()
 
 
 
-
-	//std::string str_date_plan = static_cast<std::string>(date_plan);
-	//std::wstring wstr_date_plan(str_date_plan.begin(), str_date_plan.end());
-	//static const std::wstring dateTimeFormat{ L"%Y-%m-%dT%H:%M:%SZ" };
-	//std::wistringstream ss{ wstr_date_plan };
-	//std::tm dt;
-	//ss >> std::get_time(&dt, dateTimeFormat.c_str());
-	//std::tm dt = dt_from_str(static_cast<std::string>(date_plan));
-	//auto mktime = std::mktime(&dt);
+	//std::ifstream f("..\\..\\..\\resource.json");
+	//if (f.fail()) exit(1); //Если файл не найден
+	//json data = json::parse(f);
+	/*std::string str_date_plan = static_cast<std::string>(data[u8"ДатаПлана"]);
+	std::wstring wstr_date_plan(str_date_plan.begin(), str_date_plan.end());
+	static const std::wstring dateTimeFormat{ L"%Y-%m-%dT%H:%M:%SZ" };
+	std::wistringstream ss{ wstr_date_plan };
+	std::tm dt;
+	ss >> std::get_time(&dt, dateTimeFormat.c_str());*/
+	//std::tm dt = util::dt_from_str(static_cast<std::string>(data[u8"ДатаПлана"]));
+	//std::time_t mktime = std::mktime(&dt);
 	//std::cout << mktime << '\n' << dt.tm_mon << '\n';
 	//dt.tm_mday += 1;
 	//mktime = std::mktime(&dt);
@@ -74,9 +76,24 @@ int main()
 	//dt.tm_min += 1;
 	//mktime = std::mktime(&dt);
 	//std::cout << mktime << '\n' << dt.tm_mon << '\n';
-	//dt.tm_sec += 1;
+	//dt.tm_sec += 71;
 	//mktime = std::mktime(&dt);
 	//std::cout << mktime << '\n' << dt.tm_mon << '\n';
+	//
+	//std::cout << "test:" << dt.tm_isdst << '\n';
+
+	//std::tm dt = util::dt_from_str(static_cast<std::string>(data[u8"ДатаПлана"]));
+	//std::cout << std::put_time(&dt, "%c %Z") << '\n';
+	//std::time_t mktime = std::mktime(&dt);
+	//mktime += 86400;
+	//dt = *std::localtime(&mktime);
+	//std::cout << std::put_time(&dt, "%c %Z") << '\n';
+	//mktime = std::mktime(&dt);
+	//mktime += 86400*30;
+	//dt = *std::localtime(&mktime);
+	//std::cout << std::put_time(&dt, "%c %Z") << '\n';
+
+
 	//return 0;
 
 	//static const std::wstring dateTimeFormat{ L"%Y-%m-%dT%H:%M:%SZ" };
@@ -88,4 +105,4 @@ int main()
 	//std::cout << status << '\n' << message << '\n' << mktime << std::endl;
 	//return 0;
 
-
+//}

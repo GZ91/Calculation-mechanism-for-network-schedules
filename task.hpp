@@ -103,7 +103,31 @@ public:
 	bool its_not_prev_task() {
 		return predecessors.empty();
 	}
+	
+	void set_time_start_end(std::tm val_tm)
+	{
+		std::time_t mval_tm		= std::mktime(&val_tm);
+		std::time_t mtime_start = std::mktime(&time_start);
+		std::time_t mtime_end	= std::mktime(&time_end);
 
+		std::time_t mminimum_time_start = std::mktime(&minimum_time_start_fact);
+		std::time_t mmaximum_time_end = std::mktime(&maximum_time_end_fact);
+
+
+		std::time_t time_start_quest = std::max(mval_tm, mtime_start);
+		std::time_t time_start_rec = std::max(time_start_quest, mminimum_time_start);
+
+
+		std::time_t time_end_quest = std::max(time_start_rec + static_cast<time_t>(lendth), mtime_end);
+		std::time_t time_end_rec = std::max(time_end_quest, mmaximum_time_end);
+		if (mmaximum_time_end != -1 && mmaximum_time_end < time_end_quest)
+		{
+			write_in_log("Exceeding the maximum late execution period. Task: " + ID);
+		}
+
+		time_start = *std::localtime(&time_start_rec);
+		time_end = *std::localtime(&time_end_rec);
+	}
 
 
 private:
@@ -140,6 +164,6 @@ private:
 			std::string tm_str = static_cast<std::string>(val);
 			return util::dt_from_str(tm_str);
 		}
-		return std::tm();
+		return std::tm{0};
 	}
 };
