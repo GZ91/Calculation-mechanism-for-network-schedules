@@ -18,6 +18,9 @@ struct TaskAndType {
 	Task* task;
 	TypeBond type_bond;
 	std::string key_task;
+	~TaskAndType() {
+		delete task;
+	}
 };
 
 enum TypeBond { start_start=0, start_finish=1, finish_start=2, finish_finish=3 };
@@ -38,6 +41,17 @@ public:
 		maximum_time_end_fact = convert_json_in_tm(task_json[u8"МаксФакт"]);
 		begin_NRCH = convert_json_in_tm(task_json[u8"МаксФакт"]);
 	};
+
+	~Task() {
+		for (auto link : predecessors)
+		{
+			delete link;
+		}
+		for (auto link : followers)
+		{
+			delete link;
+		}
+	}
 
 	std::string get_key() {
 		return ID;

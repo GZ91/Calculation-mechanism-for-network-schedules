@@ -23,6 +23,15 @@ void time_method() {
 		Task* task = new Task(task_json);
 		tasks_map[task->get_key()] = task;
 	}
+	///
+
+
+
+
+	///
+	for (auto link : tasks_map) {
+		delete link.second;
+	}
 }
 
 
