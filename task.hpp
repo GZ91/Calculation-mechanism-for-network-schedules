@@ -39,7 +39,7 @@ public:
 		linkage_upload(task_json[u8"Связи"]);
 		minimum_time_start_fact = convert_json_in_tm(task_json[u8"МинФакт"]);
 		maximum_time_end_fact = convert_json_in_tm(task_json[u8"МаксФакт"]);
-		begin_NRCH = convert_json_in_tm(task_json[u8"МаксФакт"]);
+		begin_NRCH = convert_json_in_tm(task_json[u8"НачалоНРЧ"]);
 	};
 
 
@@ -47,6 +47,42 @@ public:
 		return ID;
 	}
 
+	void fill_time_start_start(Task *task) {
+		time_start.tm_sec = std::max(task->time_start.tm_sec, time_start.tm_sec);
+	}
+	
+	void fill_time_finish_start(Task* task) {
+		time_start.tm_sec = std::max(task->time_end.tm_sec, time_start.tm_sec);
+	}
+	
+	void fill_time_start_finish(Task* task) {
+		time_end.tm_sec = std::max(task->time_start.tm_sec, time_end.tm_sec);
+	}
+	
+	void fill_time_finish_finish(Task* task) {
+		time_end.tm_sec = std::max(task->time_end.tm_sec, time_end.tm_sec);
+	}
+
+	void fill_time() {
+		for (auto task : followers)
+		{
+			if (task->type_bond == TypeBond::start_start) {
+				task->task->fill_time_start_start(task->task);
+			}
+			else if (task->type_bond == TypeBond::finish_start)
+			{
+				task->task->fill_time_finish_start(task->task);
+			}
+			else if (task->type_bond == TypeBond::start_finish)
+			{
+				task->task->fill_time_start_finish(task->task);
+			}
+			else if (task->type_bond == TypeBond::finish_finish)
+			{
+				task->task->fill_time_finish_finish(task->task);
+			}
+		}
+	}
 
 	std::vector<TaskAndType*>& get_followers() {
 		return followers;
