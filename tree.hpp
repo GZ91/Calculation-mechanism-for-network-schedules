@@ -30,7 +30,6 @@ namespace tree {
 
 	void fill_time(std::vector<Task*> s_tasks) {
 		for (auto task : s_tasks) {
-			task.
 			task->fill_time();			
 		}
 	}
