@@ -4,6 +4,7 @@
 #include <sstream>
 #include "task.hpp"
 #include "util.hpp"
+#include "log.hpp"
 
 
 
@@ -20,7 +21,7 @@ void time_method() {
 	for (auto task_json : tasks_json) {
 
 		Task* task = new Task(task_json);
-		tasks_map[task_json[u8"КодОп"]] = task;
+		tasks_map[task->get_key()] = task;
 	}
 }
 

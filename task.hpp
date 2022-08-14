@@ -3,10 +3,12 @@
 #include <string>
 #include <ctime>
 #include <strstream>
+#include "log.hpp"
+#include "util.hpp"
 
 
 class Task;
-enum class TypeBond;
+enum TypeBond;
 using json = nlohmann::json;
 using ull = unsigned long long;
 using uint = unsigned int;
@@ -18,7 +20,7 @@ struct TaskAndType {
 	std::string key_task;
 };
 
-enum class TypeBond { start_start, start_finish, finish_start, finish_finish };
+enum TypeBond { start_start=0, start_finish=1, finish_start=2, finish_finish=3 };
 
 class Task {
 public:
@@ -32,7 +34,14 @@ public:
 		uint sum_int = static_cast<uint>(task_json[u8"—ум"]);
 		sum = static_cast<bool>(sum_int);
 		linkage_upload(task_json[u8"—в€зи"]);
+		minimum_time_start_fact = convert_json_in_tm(task_json[u8"ћин‘акт"]);
+		maximum_time_end_fact = convert_json_in_tm(task_json[u8"ћакс‘акт"]);
+		begin_NRCH = convert_json_in_tm(task_json[u8"ћакс‘акт"]);
 	};
+
+	std::string get_key() {
+		return ID;
+	}
 
 	std::vector<TaskAndType*>& get_followers() {
 		return followers;
@@ -62,8 +71,9 @@ private:
 	std::tm time_start;
 	std::tm time_end;
 
-	std::tm minimum_time_start;
-	std::tm maximum_time_end;
+	std::tm minimum_time_start_fact;
+	std::tm maximum_time_end_fact;
+	std::tm begin_NRCH;
 
 	std::vector <TaskAndType*> followers;
 	std::vector <TaskAndType*> predecessors;
@@ -75,7 +85,16 @@ private:
 			std::string key_prev = static_cast<std::string>(link[u8" одѕредш"]);
 			TaskAndType* predec = new TaskAndType();
 			predec->key_task = key_prev;
+			predec->type_bond = link[u8"¬ид—в€зи"].is_null() ? static_cast<TypeBond>(0) : static_cast<TypeBond>(static_cast<uint>(link[u8"¬ид—в€зи"])); //получаю из числа вид св€зи
 			predecessors.push_back(predec);
 		}
+	}
+
+	std::tm convert_json_in_tm(json val) {
+		if (val.is_string()) {
+			std::string tm_str = static_cast<std::string>(val);
+			return util::dt_from_str(tm_str);
+		}
+		return std::tm();
 	}
 };
