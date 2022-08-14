@@ -16,4 +16,15 @@ namespace tree {
 			}
 		}
 	}
+
+	std::vector<Task*> tasks_not_prev(set_task s_tasks) {
+		std::vector<Task*> tasks_ret;
+		for (auto task_map : s_tasks) {
+			if (task_map.second->its_not_prev_task())
+			{
+				tasks_ret.push_back(task_map.second);
+			}
+		}
+		return tasks_ret;
+	}
 }

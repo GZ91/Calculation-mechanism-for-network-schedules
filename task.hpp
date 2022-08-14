@@ -64,6 +64,10 @@ public:
 		return predecessors;
 	};
 
+	bool its_not_prev_task() {
+		return predecessors.empty();
+	}
+
 
 
 private:
