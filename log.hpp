@@ -13,7 +13,7 @@ void write_in_log(std::string text_log, int type_error = 0) {
 	}
 	log_f << end << text_log << " % " << asctime(timeinfo);
 	if (type_error != 0) {
-		exit(1);
+		exit(type_error);
 	}
 }
 

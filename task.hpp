@@ -16,14 +16,15 @@ using set_task = std::map<std::string, Task*>;
 
 struct TaskAndType {
 	Task* task;
-	TypeBond type_bond;
+	uint type_bond;
 	std::string key_task;
 	~TaskAndType() {
 		delete task;
 	}
+	std::tm date_for_write;
 };
 
-enum TypeBond { start_start=0, start_finish=1, finish_start=2, finish_finish=3 };
+enum TypeBond { finish_start = 0, start_start=1, start_finish=2, finish_finish=3 };
 
 class Task {
 public:
@@ -31,6 +32,7 @@ public:
 	{
 		
 		lendth = static_cast<uint>(task_json[u8"ƒлит¬ћин"]);
+		second_lendth = static_cast<std::time_t>(lendth * 60);
 		ID = static_cast<std::string>(task_json[u8" одќп"]);
 		key_calendate = static_cast<std::string>(task_json[u8" од алендар€"]);
 		NestingLevel = static_cast<uint>(task_json[u8"”р¬лож"]);
@@ -56,7 +58,7 @@ public:
 	}
 	
 	void fill_time_start_finish(Task* task) {
-		time_end.tm_sec = std::max(task->time_start.tm_sec, time_end.tm_sec);
+		set_time_start_end(task->get_time_end());
 	}
 	
 	void fill_time_finish_finish(Task* task) {
@@ -103,11 +105,23 @@ public:
 	bool its_not_prev_task() {
 		return predecessors.empty();
 	}
+
+	std::tm get_time_end() {
+		return time_end;
+	}
+
+	std::tm get_time_start() {
+		return time_start;
+	}
+
 	
-	void set_time_start_end(std::tm val_tm)
+	bool set_time_start_end(std::tm val_tm)
 	{
+		
 		std::time_t mval_tm		= std::mktime(&val_tm);
 		std::time_t mtime_start = std::mktime(&time_start);
+		if (mval_tm < mtime_start) return false; //если дата начала больше даты пришедшей, то отмена, т.к. дальнейший расчет по данному элементу и его последовател€м не нужен.
+		
 		std::time_t mtime_end	= std::mktime(&time_end);
 
 		std::time_t mminimum_time_start = std::mktime(&minimum_time_start_fact);
@@ -118,15 +132,19 @@ public:
 		std::time_t time_start_rec = std::max(time_start_quest, mminimum_time_start);
 
 
-		std::time_t time_end_quest = std::max(time_start_rec + static_cast<time_t>(lendth), mtime_end);
+		std::time_t time_end_quest = std::max(time_start_rec + static_cast<time_t>(lendth * 60), mtime_end);
 		std::time_t time_end_rec = std::max(time_end_quest, mmaximum_time_end);
-		if (mmaximum_time_end != -1 && mmaximum_time_end < time_end_quest)
+		if (mmaximum_time_end != -1 && mmaximum_time_end < time_end_rec)
 		{
 			write_in_log("Exceeding the maximum late execution period. Task: " + ID);
 		}
-
+		
+		second_start	= time_start_rec;
+		second_end		= time_end_rec;
+		
 		time_start = *std::localtime(&time_start_rec);
 		time_end = *std::localtime(&time_end_rec);
+		return true;
 	}
 
 
@@ -147,6 +165,10 @@ private:
 	std::vector <TaskAndType*> followers;
 	std::vector <TaskAndType*> predecessors;
 	std::string ID;
+
+	std::time_t second_start;
+	std::time_t second_end;
+	std::time_t second_lendth;
 
 	void linkage_upload(json links) {
 		for (auto link : links)

@@ -25,10 +25,10 @@ void time_method() {
 		tasks_map[task->get_key()] = task;
 	}
 	///
+	tree::link_elements(tasks_map);
+	std::vector<TaskAndType*> tasks_not_prev = tree::tasks_not_prev(tasks_map, date_plan);
 
-	std::vector<Task*> tasks_not_prev = tree::tasks_not_prev(tasks_map);
-
-	tree::fill_time(tasks_not_prev, date_plan);
+	tree::tree_fill_time(tasks_not_prev);
 	///
 	for (auto link : tasks_map) {
 		delete link.second;
