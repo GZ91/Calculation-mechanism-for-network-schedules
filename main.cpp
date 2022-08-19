@@ -51,7 +51,8 @@ int main()
 }
 
 
-
+	// в процессе разработки..
+	// ЗДЕСЬ тестовые кусочки
 	//std::ifstream f("..\\..\\..\\resource.json");
 	//if (f.fail()) exit(1); //Если файл не найден
 	//json data = json::parse(f);
