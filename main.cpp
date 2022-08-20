@@ -1,10 +1,13 @@
 ﻿#include "schedule.hpp"
 
 int main() {
-	std::ifstream f("..\\..\\..\\resource.json");
-	if (f.fail()) exit(1); //Если файл не найден
-	json data = json::parse(f);
-	Schedule sch(data);
+	for (int i = 0; i < 1000; ++i) { //memory leak test
+		std::ifstream f("..\\..\\..\\resource.json");
+		if (f.fail()) exit(1); //Если файл не найден
+		json data = json::parse(f);
+		f.close();
+		Schedule sch(data);
+	}
 }
 
 

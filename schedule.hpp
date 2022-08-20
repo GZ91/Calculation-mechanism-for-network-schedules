@@ -8,6 +8,8 @@
 #include <map>
 #include <sstream>
 #include <chrono>
+#include <memory>
+#include <algorithm>
 #include "nlohmann\json.hpp"
 
 
@@ -26,8 +28,7 @@ public:
 	json get_processed_chart();
 private:
 	class Task;
-	using shr_ptr_task = std::shared_ptr<Schedule::Task>;
-	using map_tasks = std::map<std::string, shr_ptr_task>;
+	using map_tasks = std::map<std::string, std::shared_ptr<Schedule::Task>>;
 	map_tasks tasks_map;
 	std::string name;
 	std::tm date_plan;
@@ -45,6 +46,7 @@ private:
 	class Task {
 	public:
 		explicit Task(json&);
+		~Task();
 		void fill_time();
 		std::string get_key();
 		std::vector<TaskAndType*>& get_followers();
@@ -64,8 +66,8 @@ private:
 		std::tm maximum_time_end_fact;
 		std::tm begin_NRCH;
 
-		std::vector <TaskAndType*> followers;
-		std::vector <TaskAndType*> predecessors;
+		std::vector <std::shared_ptr<TaskAndType>> followers;
+		std::vector <std::shared_ptr<TaskAndType>> predecessors;
 		std::string ID;
 
 		std::time_t second_start;

@@ -5,10 +5,12 @@ Schedule::Schedule(json init_val) {
 	date_plan = Schedule::util::dt_from_json(init_val[u8"ДатаПлана"]);
 	json tasks_json = init_val[u8"Операции"];
 	for (json task_json : tasks_json) {
-		shr_ptr_task task = std::make_shared<Schedule::Task>(task_json);
+		auto task = std::make_shared<Schedule::Task>(task_json);
 		tasks_map[task->get_key()] = task;
 	}
 }
+
+
 
 std::tm Schedule::util::dt_from_str(std::string str)
 {
@@ -22,6 +24,7 @@ std::tm Schedule::util::dt_from_str(std::string str)
 
 std::tm Schedule::util::dt_from_json(json val)
 {
+	if (val.is_null()) return std::tm();
 	return dt_from_str(static_cast<std::string>(val));
 }
 
@@ -56,11 +59,15 @@ Schedule::Task::Task(json& task_json)
 	begin_NRCH = Schedule::util::dt_from_json(task_json[u8"НачалоНРЧ"]);
 }
 
+Schedule::Task::~Task() {
+	
+}
+
 void Schedule::Task::linkage_upload(json links) {
 	for (auto link : links)
 	{
 		std::string key_prev = static_cast<std::string>(link[u8"КодПредш"]);
-		TaskAndType* predec = new TaskAndType();
+		auto predec = std::make_shared<TaskAndType>();
 		predec->key_task = key_prev;
 		predec->type_bond = link[u8"ВидСвязи"].is_null() ? static_cast<TypeBond>(0) : static_cast<TypeBond>(static_cast<uint>(link[u8"ВидСвязи"])); //получаю из числа вид связи
 		predecessors.push_back(predec);
