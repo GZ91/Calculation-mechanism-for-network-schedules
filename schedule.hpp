@@ -11,12 +11,11 @@
 #include "nlohmann\json.hpp"
 
 
-class Task;
 enum TypeBond;
 using json = nlohmann::json;
 using ull = unsigned long long;
 using uint = unsigned int;
-using map_tasks = std::map<std::string, std::shared_ptr<Task>>;
+
 
 class Schedule
 {
@@ -26,6 +25,9 @@ public:
 	static void processing(Schedule *);
 	json get_processed_chart();
 private:
+	class Task;
+	using shr_ptr_task = std::shared_ptr<Schedule::Task>;
+	using map_tasks = std::map<std::string, shr_ptr_task>;
 	map_tasks tasks_map;
 	std::string name;
 	std::tm date_plan;
@@ -34,7 +36,6 @@ private:
 	std::tm dt_from_json(json);
 	
 	enum TypeBond { finish_start = 0, start_start = 1, start_finish = 2, finish_finish = 3 };
-	class Task;
 	struct TaskAndType {
 		Task* task;
 		uint type_bond;
@@ -43,7 +44,7 @@ private:
 	};
 	class Task {
 	public:
-		Task(json&);
+		explicit Task(json&);
 		void fill_time();
 		std::string get_key();
 		std::vector<TaskAndType*>& get_followers();

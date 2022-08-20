@@ -2,10 +2,10 @@
 
 Schedule::Schedule(json init_val) {
 	name = static_cast<std::string>(init_val[u8"»м€"]);
-	date_plan = dt_from_json(init_val[u8"ƒатаѕлана"]);
-	auto tasks_json = init_val[u8"ќперации"];
-	for (auto task_json : tasks_json) {
-		std::shared_ptr<Schedule::Task> task(task_json);
+	date_plan = Schedule::util::dt_from_json(init_val[u8"ƒатаѕлана"]);
+	json tasks_json = init_val[u8"ќперации"];
+	for (json task_json : tasks_json) {
+		shr_ptr_task task = std::make_shared<Schedule::Task>(task_json);
 		tasks_map[task->get_key()] = task;
 	}
 }
@@ -65,4 +65,9 @@ void Schedule::Task::linkage_upload(json links) {
 		predec->type_bond = link[u8"¬ид—в€зи"].is_null() ? static_cast<TypeBond>(0) : static_cast<TypeBond>(static_cast<uint>(link[u8"¬ид—в€зи"])); //получаю из числа вид св€зи
 		predecessors.push_back(predec);
 	}
+}
+
+std::string Schedule::Task::get_key()
+{
+	return ID;
 }
