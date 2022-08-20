@@ -55,7 +55,6 @@ namespace util {
 	}
 
 
-
 	std::chrono::milliseconds time_measurement(void (*method)()) {
 		auto start = std::chrono::high_resolution_clock::now();
 		method();

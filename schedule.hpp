@@ -22,10 +22,17 @@ using uint = unsigned int;
 class Schedule
 {
 public:
-	explicit Schedule(json);
-	std::chrono::milliseconds execute_processing();
-	static void processing(Schedule *);
+	explicit Schedule(json, std::ostream&);
+	void execute_processing();
 	json get_processed_chart();
+	class Util {
+	public:
+		static std::tm dt_from_str(std::string);
+		static std::tm dt_from_json(json);
+		static std::chrono::milliseconds time_measurement(void (*method)());
+		static void write_in_log(std::string, int type_error = 0);
+	};
+
 private:
 	class Task;
 	using map_tasks = std::map<std::string, std::shared_ptr<Schedule::Task>>;
@@ -75,11 +82,10 @@ private:
 		std::time_t second_lendth;
 
 		void linkage_upload(json links);
-	};
-	static class util {
-	public:
-		static std::tm dt_from_str(std::string);
-		static std::tm dt_from_json(json);
-		static std::chrono::milliseconds time_measurement(void (*method)(Schedule* ), Schedule* obj);
+
+		//void print_error_(std::string text_error, int type_error);
+		void print_error(std::string text_error, int type_error = 0);
+		//	print_error_(text_error, type_error);
+		//}
 	};
 };

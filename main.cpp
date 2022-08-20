@@ -1,12 +1,23 @@
 ﻿#include "schedule.hpp"
 
+
+void test_function() {
+	std::ifstream f("..\\..\\..\\resource.json");
+	if (f.fail()) exit(1); //Если файл не найден
+	json data = json::parse(f);
+	f.close();
+	Schedule sch(data, std::cout);
+}
+
+
 int main() {
+
 	for (int i = 0; i < 1000; ++i) { //memory leak test
-		std::ifstream f("..\\..\\..\\resource.json");
-		if (f.fail()) exit(1); //Если файл не найден
-		json data = json::parse(f);
-		f.close();
-		Schedule sch(data);
+
+		auto time_proc = Schedule::Util::time_measurement(test_function);
+		auto time_count = static_cast<double>(time_proc.count());
+		time_count /= 1000;
+		std::cout << "Time: " << time_count << " sec\n" << std::endl;
 	}
 }
 

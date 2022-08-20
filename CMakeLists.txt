@@ -6,7 +6,7 @@ project (NC_Develop)
 
 find_package(nlohmann_json)
 
-add_executable(NC_Develop "main.cpp" "schedule.hpp" "schedule.cpp") #"task.hpp") 
+add_executable(NC_Develop "main.cpp" "schedule.hpp" "schedule.cpp" "schedule_util.cpp" "schedule_task.cpp") #"task.hpp") 
 
 target_include_directories(
     NC_Develop PRIVATE
