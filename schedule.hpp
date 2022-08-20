@@ -36,13 +36,14 @@ public:
 
 private:
 	class Task;
+	struct TaskAndType;
 	using map_tasks = std::map<std::string, std::shared_ptr<Schedule::Task>>;
 	
 	map_tasks tasks_map;
 	std::string name;
 	std::tm date_plan;
 	
-
+	
 	std::tm dt_from_str(std::string);
 	std::tm dt_from_json(json);
 	void Schedule::link_elements(map_tasks);
@@ -66,6 +67,7 @@ private:
 		std::tm get_time_start();
 		bool set_time_start_end(std::tm);
 		void add_followers(std::shared_ptr<TaskAndType> task);
+		bool its_not_prev_task();
 	private:
 		std::string key_calendate;
 		bool its_critical_task;
@@ -92,4 +94,6 @@ private:
 		void print_error(std::string text_error, int type_error = 0);
 	};
 
+	std::vector<std::shared_ptr<TaskAndType>> tasks_not_prev();
+	void tree_fill_time(std::vector<std::shared_ptr<TaskAndType>>);
 };

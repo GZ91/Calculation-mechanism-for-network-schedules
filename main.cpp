@@ -7,6 +7,7 @@ void test_function() {
 	json data = json::parse(f);
 	f.close();
 	Schedule sch(data, std::cout);
+	sch.execute_processing();
 }
 
 

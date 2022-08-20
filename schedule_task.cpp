@@ -33,6 +33,10 @@ std::vector <std::shared_ptr<Schedule::TaskAndType>>& Schedule::Task::get_predec
 	return predecessors;
 };
 
+std::vector <std::shared_ptr<Schedule::TaskAndType>>& Schedule::Task::get_followers() {
+	return followers;
+};
+
 std::string Schedule::Task::get_key()
 {
 	return ID;
@@ -44,4 +48,44 @@ void Schedule::Task::print_error(std::string text_error, int type_error) {
 
 void Schedule::Task::add_followers(std::shared_ptr<TaskAndType> task) {
 	followers.push_back(task);
+}
+
+bool Schedule::Task::its_not_prev_task() {
+	return predecessors.empty();
+}
+
+bool Schedule::Task::set_time_start_end(std::tm val_tm)
+{
+
+	std::time_t mval_tm = std::mktime(&val_tm);
+	std::time_t mtime_start = std::mktime(&time_start);
+	if (mval_tm < mtime_start) return false; //если дата начала больше даты пришедшей, то отмена, т.к. дальнейший расчет по данному элементу и его последователям не нужен.
+
+	std::time_t mtime_end = std::mktime(&time_end);
+
+	std::time_t mminimum_time_start = std::mktime(&minimum_time_start_fact);
+	std::time_t mmaximum_time_end = std::mktime(&maximum_time_end_fact);
+
+
+	std::time_t time_start_quest = std::max(mval_tm, mtime_start);
+	std::time_t time_start_rec = std::max(time_start_quest, mminimum_time_start);
+
+
+	std::time_t time_end_quest = std::max(time_start_rec + static_cast<time_t>(lendth * 60), mtime_end);
+	std::time_t time_end_rec = std::max(time_end_quest, mmaximum_time_end);
+	if (mmaximum_time_end != -1 && mmaximum_time_end < time_end_rec)
+	{
+		Util::write_in_log("Exceeding the maximum late execution period. Task: " + ID);
+	}
+
+	second_start = time_start_rec;
+	second_end = time_end_rec;
+
+	time_start = *std::localtime(&time_start_rec);
+	time_end = *std::localtime(&time_end_rec);
+	return true;
+}
+
+std::tm Schedule::Task::get_time_end() {
+	return time_end;
 }

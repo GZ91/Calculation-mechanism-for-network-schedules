@@ -11,6 +11,7 @@ Schedule::Schedule(json init_val, std::ostream& fst) {
 		tasks_map[key] = _task;
 	}
 	link_elements(tasks_map);
+
 }
 Schedule::~Schedule() {
 	for (auto w_ptr : tasks_map)
@@ -20,7 +21,8 @@ Schedule::~Schedule() {
 }
 
 void Schedule::execute_processing() {
-	
+	std::vector<std::shared_ptr<Schedule::TaskAndType>> not_prev_TATS = tasks_not_prev();
+	tree_fill_time(not_prev_TATS);
 }
 
 void Schedule::link_elements(map_tasks s_tasks)
@@ -38,3 +40,43 @@ void Schedule::link_elements(map_tasks s_tasks)
 	}
 }
 
+std::vector<std::shared_ptr<Schedule::TaskAndType>> Schedule::tasks_not_prev() {
+	
+	std::vector <std::shared_ptr<TaskAndType>> tasks_ret;
+	for (auto task_map : tasks_map) {
+		if (task_map.second->its_not_prev_task()){
+			std::shared_ptr<TaskAndType> T = std::make_shared<TaskAndType>();
+			T->task = task_map.second;
+			T->type_bond = TypeBond::finish_start;
+			T->date_for_write = date_plan;
+			tasks_ret.push_back(T);
+		}
+	}
+	return tasks_ret;
+}
+
+
+void Schedule::tree_fill_time(std::vector<std::shared_ptr<Schedule::TaskAndType>> s_tasks) {
+	std::vector<std::shared_ptr<Schedule::TaskAndType>> tasks(s_tasks);
+
+	uint count = tasks.size();
+	uint index = 0;
+	while (count > index)
+	{
+		auto task = tasks[index]->task;
+
+		if (tasks[index]->type_bond == TypeBond::finish_start && !task->set_time_start_end(tasks[index]->date_for_write)) {
+			++index;
+			continue;
+		}
+		auto followers = task->get_followers();
+		for (auto task_follow : followers) {
+			auto itr_find = std::find(tasks.begin(), tasks.end(), task_follow);
+			if (itr_find != tasks.end()) 
+				followers.erase(itr_find);
+		}
+		tasks.insert(tasks.end(), followers.begin(), followers.end());
+		count += followers.size();
+		++index;
+	}
+}
