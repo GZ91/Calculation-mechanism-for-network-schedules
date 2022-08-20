@@ -1,4 +1,34 @@
-﻿#include <iostream>
+﻿#include "schedule.hpp"
+
+int main() {
+	std::ifstream f("..\\..\\..\\resource.json");
+	if (f.fail()) exit(1); //Если файл не найден
+	json data = json::parse(f);
+	Schedule sch(data);
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/*#include <iostream>
 #include <fstream>
 #include "nlohmann\json.hpp"
 #include <sstream>
@@ -6,11 +36,14 @@
 #include "util.hpp"
 #include "log.hpp"
 #include "tree.hpp"
+*/
 
 
 
 
 
+
+/*
 void time_method() {
 	std::ifstream f("..\\..\\..\\resource.json");
 	if (f.fail()) exit(1); //Если файл не найден
@@ -48,7 +81,7 @@ int main()
 
 	return 0;
 
-}
+}*/
 
 
 	// в процессе разработки..

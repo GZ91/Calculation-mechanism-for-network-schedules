@@ -4,6 +4,7 @@
 #include <map>
 #include <ctime>
 #include <chrono>
+#include <sstream>
 
 #include "nlohmann\json.hpp"
 using json = nlohmann::json;
@@ -46,6 +47,11 @@ namespace util {
 		std::tm dt;
 		ss >> std::get_time(&dt, dateTimeFormat.c_str());
 		return dt;
+	}
+
+	std::tm dt_from_json(json val)
+	{
+		return dt_from_str(static_cast<std::string>(val));
 	}
 
 
