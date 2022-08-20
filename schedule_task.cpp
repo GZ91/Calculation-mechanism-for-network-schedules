@@ -13,11 +13,9 @@ Schedule::Task::Task(json& task_json)
 	minimum_time_start_fact = Schedule::Util::dt_from_json(task_json[u8"МинФакт"]);
 	maximum_time_end_fact = Schedule::Util::dt_from_json(task_json[u8"МаксФакт"]);
 	begin_NRCH = Schedule::Util::dt_from_json(task_json[u8"НачалоНРЧ"]);
-	print_error("The element was successfully created");
 }
 
 Schedule::Task::~Task() {
-
 }
 
 void Schedule::Task::linkage_upload(json links) {
@@ -31,6 +29,10 @@ void Schedule::Task::linkage_upload(json links) {
 	}
 }
 
+std::vector <std::shared_ptr<Schedule::TaskAndType>>& Schedule::Task::get_predecessors() {
+	return predecessors;
+};
+
 std::string Schedule::Task::get_key()
 {
 	return ID;
@@ -38,4 +40,8 @@ std::string Schedule::Task::get_key()
 
 void Schedule::Task::print_error(std::string text_error, int type_error) {
 	Schedule::Util::write_in_log("Key: " + get_key() + " :" + text_error, type_error);
+}
+
+void Schedule::Task::add_followers(std::shared_ptr<TaskAndType> task) {
+	followers.push_back(task);
 }
