@@ -5,8 +5,9 @@
 
 
 TEST(Schedule, Exist_To_File_Log) {
+	//std::ifstream f("..\\..\\..\\resource_big.json");
 	std::ifstream f("..\\..\\..\\resource.json");
-	if (f.fail()) exit(1); //Если файл не найден
+	if (f.fail()) ASSERT_TRUE(false);
 	json data = json::parse(f);
 	f.close();
 	Schedule sch(data, "logovo.txt");
@@ -32,4 +33,13 @@ TEST(Schedule, dt_from_str) {
 	dt_2.tm_mday = 3;	//[1 - 31]
 	time_t seconds_2 = std::mktime(&dt_2);
 	ASSERT_EQ(seconds_1, seconds_2);
+}
+
+TEST(Schedule, processed_against_a_benchmark) {
+	std::ifstream f("..\\..\\..\\resource.json");
+	if (f.fail()) ASSERT_TRUE(false);
+	json data = json::parse(f);
+	f.close();
+	Schedule sch(data, "logovo.txt");
+	
 }

@@ -96,6 +96,6 @@ private:
 	};
 
 	std::vector<std::shared_ptr<TaskAndType>> tasks_not_prev();
-
+	void process_with_the_dextra_algorithm();
 	void tree_fill_time(std::vector<std::shared_ptr<TaskAndType>>);
 };

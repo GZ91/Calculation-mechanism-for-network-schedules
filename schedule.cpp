@@ -25,6 +25,7 @@ Schedule::~Schedule() {
 void Schedule::execute_processing() {
 	std::vector<std::shared_ptr<Schedule::TaskAndType>> not_prev_TATS = tasks_not_prev();
 	tree_fill_time(not_prev_TATS);
+	process_with_the_dextra_algorithm();
 }
 
 void Schedule::link_elements(map_tasks s_tasks)
@@ -83,5 +84,90 @@ void Schedule::tree_fill_time(std::vector<std::shared_ptr<Schedule::TaskAndType>
 				
 		}
 		++index;
+	}
+}
+
+void Schedule::process_with_the_dextra_algorithm() {
+	
+
+	const unsigned int size_map_tasks = tasks_map.size();
+	std::vector<std::shared_ptr<Task>> tasks;
+	for (auto task : tasks_map) {
+		tasks.push_back(task.second);
+	}
+	std::vector <bool> visited(size_map_tasks, false);	
+	int index = 0, u = 0;
+	std::vector<std::vector<int>> w;
+	w.resize(size_map_tasks);
+	for (int i = 0; i < size_map_tasks; ++i)
+		w[i].resize(size_map_tasks);
+
+	std::vector<int> D(size_map_tasks);
+	for (int i = 0; i < size_map_tasks; i++)
+	{
+		D[i] = w[st][i];
+		visited[i] = false;
+	}
+
+
+	for (int i = 0; i < size_map_tasks; i++)
+	{
+		int min = INT_MAX;
+		for (int j = 0; j < size_map_tasks; j++)
+		{
+			if (!visited[j] && D[j] < min)
+			{
+				min = D[j];
+				index = j;
+			}
+		}
+		u = index;
+		visited[u] = true;
+		for (int j = 0; j < size_map_tasks; j++)
+		{
+			if (!visited[j] && w[u][j] != INT_MAX && D[u] != INT_MAX && (D[u] + w[u][j] < D[j]))
+			{
+				D[j] = D[u] + w[u][j];
+			}
+		}
+	}
+
+
+
+
+	//vector<vector<int >> w;
+	//w.resize(n);
+	for (int i = 0; i < n; i++)
+		w[i].resize(n);
+
+	bool visited[n];
+	int D[n];
+	for (int i = 0; i < n; i++)
+	{
+		D[i] = w[st][i];
+		visited[i] = false;
+	}
+	D[st] = 0;
+	int index = 0, u = 0;
+	for (int i = 0; i < n; i++)
+	{
+		int min = INT_MAX;
+		for (int j = 0; j < n; j++)
+		{
+			if (!visited[j] && D[j] < min)
+			{
+				min = D[j];
+				index = j;
+			}
+		}
+		u = index;
+		visited[u] = true;
+		for (int j = 0; j < n; j++)
+		{
+			if (!visited[j] && w[u][j] != INT_MAX && D[u] != INT_MAX && (D[u] + w[u][j] < D[j]))
+			{
+				D[j] = D[u] + w[u][j];
+			}
+		}
 	}
 }
