@@ -89,3 +89,7 @@ bool Schedule::Task::set_time_start_end(std::tm val_tm)
 std::tm Schedule::Task::get_time_end() {
 	return time_end;
 }
+
+std::tm Schedule::Task::get_time_start() {
+	return time_start;
+}

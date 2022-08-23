@@ -67,14 +67,17 @@ void Schedule::tree_fill_time(std::vector<std::shared_ptr<Schedule::TaskAndType>
 			++index;
 			continue;
 		}
-		auto followers = task->get_followers();
-		for (auto task_follow : followers) {
+		std::vector<std::shared_ptr<TaskAndType>> followers_(task->get_followers());
+		for (auto task_follow : followers_) {
 			auto itr_find = std::find(tasks.begin(), tasks.end(), task_follow);
-			if (itr_find != tasks.end()) 
-				followers.erase(itr_find);
+			auto time_start_follow = std::mktime(&(task_follow->task->get_time_start()));
+			auto time_end_this = std::mktime(&(task->get_time_end()));
+			if (itr_find == tasks.end() && task_follow->type_bond == TypeBond::finish_start && time_start_follow < time_end_this) {
+				tasks.push_back(task_follow);
+				count++;
+			}
+				
 		}
-		tasks.insert(tasks.end(), followers.begin(), followers.end());
-		count += followers.size();
 		++index;
 	}
 }
