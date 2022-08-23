@@ -1,4 +1,5 @@
 #include "schedule.hpp"
+std::string Schedule::Util::name_log_file = "";
 
 std::tm Schedule::Util::dt_from_str(std::string str)
 {
@@ -24,7 +25,7 @@ std::chrono::milliseconds Schedule::Util::time_measurement(void (*method)()) {
 }
 
 void Schedule::Util::write_in_log(std::string text_log, int type_error) {
-	std::fstream log_f("log.txt", std::ios::app);
+	std::fstream log_f(name_log_file, std::ios::app);
 	time_t seconds = time(NULL);
 	tm* timeinfo = localtime(&seconds);
 	std::string end = "";
@@ -35,4 +36,8 @@ void Schedule::Util::write_in_log(std::string text_log, int type_error) {
 	if (type_error != 0) {
 		exit(type_error);
 	}
+}
+
+void Schedule::Util::create_name_log_file(std::string new_name) {
+	Schedule::Util::name_log_file = new_name;
 }

@@ -22,7 +22,7 @@ using uint = unsigned int;
 class Schedule
 {
 public:
-	explicit Schedule(json, std::ostream&);
+	explicit Schedule(json, std::string);
 	~Schedule();
 	void execute_processing();
 	json get_processed_chart();
@@ -32,8 +32,9 @@ public:
 		static std::tm dt_from_json(json);
 		static std::chrono::milliseconds time_measurement(void (*method)());
 		static void write_in_log(std::string, int type_error = 0);
+		static void create_name_log_file(std::string);
+		static std::string name_log_file;
 	};
-
 private:
 	class Task;
 	struct TaskAndType;
@@ -95,5 +96,6 @@ private:
 	};
 
 	std::vector<std::shared_ptr<TaskAndType>> tasks_not_prev();
+
 	void tree_fill_time(std::vector<std::shared_ptr<TaskAndType>>);
 };

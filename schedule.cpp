@@ -1,6 +1,7 @@
 #include "schedule.hpp"
 
-Schedule::Schedule(json init_val, std::ostream& fst) {
+Schedule::Schedule(json init_val, std::string logovo) {
+	Schedule::Util::create_name_log_file(logovo);
 	name = static_cast<std::string>(init_val[u8"Имя"]);
 	date_plan = Schedule::Util::dt_from_json(init_val[u8"ДатаПлана"]);
 	json tasks_json = init_val[u8"Операции"];
@@ -11,14 +12,15 @@ Schedule::Schedule(json init_val, std::ostream& fst) {
 		tasks_map[key] = _task;
 	}
 	link_elements(tasks_map);
-
 }
+
 Schedule::~Schedule() {
 	for (auto w_ptr : tasks_map)
 	{
 		w_ptr.second->~Task();
 	}
 }
+
 
 void Schedule::execute_processing() {
 	std::vector<std::shared_ptr<Schedule::TaskAndType>> not_prev_TATS = tasks_not_prev();
@@ -41,7 +43,6 @@ void Schedule::link_elements(map_tasks s_tasks)
 }
 
 std::vector<std::shared_ptr<Schedule::TaskAndType>> Schedule::tasks_not_prev() {
-	
 	std::vector <std::shared_ptr<TaskAndType>> tasks_ret;
 	for (auto task_map : tasks_map) {
 		if (task_map.second->its_not_prev_task()){
@@ -55,16 +56,13 @@ std::vector<std::shared_ptr<Schedule::TaskAndType>> Schedule::tasks_not_prev() {
 	return tasks_ret;
 }
 
-
 void Schedule::tree_fill_time(std::vector<std::shared_ptr<Schedule::TaskAndType>> s_tasks) {
 	std::vector<std::shared_ptr<Schedule::TaskAndType>> tasks(s_tasks);
-
 	uint count = tasks.size();
 	uint index = 0;
 	while (count > index)
 	{
 		auto task = tasks[index]->task;
-
 		if (tasks[index]->type_bond == TypeBond::finish_start && !task->set_time_start_end(tasks[index]->date_for_write)) {
 			++index;
 			continue;

@@ -6,7 +6,7 @@ void test_function() {
 	if (f.fail()) exit(1); //Если файл не найден
 	json data = json::parse(f);
 	f.close();
-	Schedule sch(data, std::cout);
+	Schedule sch(data, "logovo.txt");
 	sch.execute_processing();
 }
 
