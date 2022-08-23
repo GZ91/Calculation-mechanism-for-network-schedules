@@ -41,12 +41,12 @@ endif()
 
 find_package(nlohmann_json)
 
-add_executable(NC_Develop "main.cpp" "schedule.hpp" "schedule.cpp" "schedule_util.cpp" "schedule_task.cpp") 
+add_executable(NC_Develop "source/main.cpp" "source/schedule.hpp" "source/schedule.cpp" "source/schedule_util.cpp" "source/schedule_task.cpp") 
 
 
 
 
-add_executable(NC_Develop_Testing "schedule.hpp" "schedule.cpp" "schedule_util.cpp" "schedule_task.cpp" "${CMAKE_CURRENT_SOURCE_DIR}/test/test.cpp") 
+add_executable(NC_Develop_Testing "source/schedule.hpp" "source/schedule.cpp" "source/schedule_util.cpp" "source/schedule_task.cpp" "${CMAKE_CURRENT_SOURCE_DIR}/test/test.cpp") 
 
 
 target_link_libraries(
