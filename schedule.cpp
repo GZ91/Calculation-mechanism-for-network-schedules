@@ -72,6 +72,10 @@ void Schedule::tree_fill_time(std::vector<std::shared_ptr<Schedule::TaskAndType>
 			auto itr_find = std::find(tasks.begin(), tasks.end(), task_follow);
 			auto time_start_follow = std::mktime(&(task_follow->task->get_time_start()));
 			auto time_end_this = std::mktime(&(task->get_time_end()));
+			if (time_start_follow == -1 && time_end_this == -1)
+			{
+				Schedule::Util::write_in_log("Key: " + task->get_key() + " : Empty date comparison detected, probably an error - contact the developer." + ": follower : " + task_follow->task->get_key());
+			}
 			if (itr_find == tasks.end() && task_follow->type_bond == TypeBond::finish_start && time_start_follow < time_end_this) {
 				tasks.push_back(task_follow);
 				count++;

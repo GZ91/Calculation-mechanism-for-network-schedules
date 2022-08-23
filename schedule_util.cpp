@@ -33,6 +33,7 @@ void Schedule::Util::write_in_log(std::string text_log, int type_error) {
 		end = " @program crash@";
 	}
 	log_f << end << text_log << " % " << asctime(timeinfo);
+	log_f.close();
 	if (type_error != 0) {
 		exit(type_error);
 	}

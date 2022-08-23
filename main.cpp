@@ -12,9 +12,7 @@ void test_function() {
 
 
 int main() {
-
 	for (int i = 0; i < 1000000; ++i) { //memory leak test
-
 		auto time_proc = Schedule::Util::time_measurement(test_function);
 		auto time_count = static_cast<double>(time_proc.count());
 		time_count /= 1000;
@@ -41,6 +39,24 @@ int main() {
 
 
 
+
+//time_t seconds = time(NULL);
+//tm* timeinfo = localtime(&seconds);
+//timeinfo->tm_min++;
+//timeinfo->tm_wday += 3;
+//seconds = std::mktime(timeinfo);
+//
+//time_t seconds_2 = time(NULL);
+//tm* timeinfo_2 = localtime(&seconds_2);
+//timeinfo_2->tm_min += 2;
+//timeinfo_2->tm_wday += 3;
+//seconds_2 = std::mktime(timeinfo_2);
+//
+//std::cout << timeinfo << std::endl;
+//std::cout << timeinfo_2 << std::endl;
+//
+//if (seconds < seconds_2)std::cout << "All good" << std::endl;
+//if (seconds == seconds_2)std::cout << "All bed" << std::endl;
 
 
 /*#include <iostream>
