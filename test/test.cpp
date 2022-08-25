@@ -11,7 +11,7 @@ TEST(Schedule, Exist_To_File_Log) {
 	json data = json::parse(f);
 	f.close();
 	Schedule sch(data, "logovo.txt");
-	Schedule::Util::write_in_log("test");
+	Util::write_in_log("test");
    
     std::ifstream file;
     file.open("logovo.txt");
@@ -22,7 +22,7 @@ TEST(Schedule, Exist_To_File_Log) {
 
 TEST(Schedule, dt_from_str) {
 	std::string date = "2020-07-03T00:00:00";
-	tm dt_1 = Schedule::Util::dt_from_str(date);
+	tm dt_1 = Util::dt_from_str(date);
 	
 	time_t seconds_1 = std::mktime(&dt_1);
 

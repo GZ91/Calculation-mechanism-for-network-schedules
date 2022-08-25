@@ -13,7 +13,7 @@ void test_function() {
 
 int main() {
 	for (int i = 0; i < 1000000; ++i) { //memory leak test
-		auto time_proc = Schedule::Util::time_measurement(test_function);
+		auto time_proc = Util::time_measurement(test_function);
 		auto time_count = static_cast<double>(time_proc.count());
 		time_count /= 1000;
 		std::cout << "Time: " << time_count << " sec\n" << std::endl;

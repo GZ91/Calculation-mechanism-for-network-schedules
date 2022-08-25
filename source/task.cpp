@@ -1,60 +1,62 @@
-#include "schedule.hpp"
+#include "task.hpp"
+#include "util.hpp"
+#include "task_and_type.hpp"
 
-Schedule::Task::Task(json& task_json)
+Task::Task(json& task_json)
 {
-	lendth = static_cast<uint>(task_json[u8"ƒлит¬ћин"]);
+	lendth = static_cast<unsigned int>(task_json[u8"ƒлит¬ћин"]);
 	second_lendth = static_cast<std::time_t>(lendth * 60);
 	ID = static_cast<std::string>(task_json[u8" одќп"]);
 	key_calendate = static_cast<std::string>(task_json[u8" од алендар€"]);
-	NestingLevel = static_cast<uint>(task_json[u8"”р¬лож"]);
-	uint sum_int = static_cast<uint>(task_json[u8"—ум"]);
+	NestingLevel = static_cast<unsigned int>(task_json[u8"”р¬лож"]);
+	unsigned int sum_int = static_cast<unsigned int>(task_json[u8"—ум"]);
 	sum = static_cast<bool>(sum_int);
 	linkage_upload(task_json[u8"—в€зи"]);
-	minimum_time_start_fact = Schedule::Util::dt_from_json(task_json[u8"ћин‘акт"]);
-	maximum_time_end_fact = Schedule::Util::dt_from_json(task_json[u8"ћакс‘акт"]);
-	begin_NRCH = Schedule::Util::dt_from_json(task_json[u8"ЌачалоЌ–„"]);
+	minimum_time_start_fact = Util::dt_from_json(task_json[u8"ћин‘акт"]);
+	maximum_time_end_fact = Util::dt_from_json(task_json[u8"ћакс‘акт"]);
+	begin_NRCH = Util::dt_from_json(task_json[u8"ЌачалоЌ–„"]);
 }
 
-Schedule::Task::~Task() {
+Task::~Task() {
 }
 
-void Schedule::Task::linkage_upload(json links) {
+void Task::linkage_upload(json links) {
 	for (auto link : links)
 	{
 		std::string key_prev = static_cast<std::string>(link[u8" одѕредш"]);
 		auto predec = std::make_shared<TaskAndType>();
 		predec->key_task = key_prev;
-		predec->type_bond = link[u8"¬ид—в€зи"].is_null() ? static_cast<TypeBond>(0) : static_cast<TypeBond>(static_cast<uint>(link[u8"¬ид—в€зи"])); //получаю из числа вид св€зи
+		predec->type_bond = link[u8"¬ид—в€зи"].is_null() ? static_cast<TypeBond>(0) : static_cast<TypeBond>(static_cast<unsigned int>(link[u8"¬ид—в€зи"])); //получаю из числа вид св€зи
 		predecessors.push_back(predec);
 	}
 }
 
-std::vector <std::shared_ptr<Schedule::TaskAndType>>& Schedule::Task::get_predecessors() {
+std::vector <std::shared_ptr<TaskAndType>>& Task::get_predecessors() {
 	return predecessors;
 };
 
-std::vector <std::shared_ptr<Schedule::TaskAndType>>& Schedule::Task::get_followers() {
+std::vector <std::shared_ptr<TaskAndType>>& Task::get_followers() {
 	return followers;
 };
 
-std::string Schedule::Task::get_key()
+std::string Task::get_key()
 {
 	return ID;
 }
 
-void Schedule::Task::print_error(std::string text_error, int type_error) {
-	Schedule::Util::write_in_log("Key: " + get_key() + " :" + text_error, type_error);
+void Task::print_error(std::string text_error, int type_error) {
+	Util::write_in_log("Key: " + get_key() + " :" + text_error, type_error);
 }
 
-void Schedule::Task::add_followers(std::shared_ptr<TaskAndType> task) {
+void Task::add_followers(std::shared_ptr<TaskAndType> task) {
 	followers.push_back(task);
 }
 
-bool Schedule::Task::its_not_prev_task() {
+bool Task::its_not_prev_task() {
 	return predecessors.empty();
 }
 
-bool Schedule::Task::set_time_start_end(std::tm val_tm)
+bool Task::set_time_start_end(std::tm val_tm)
 {
 
 	std::time_t mval_tm = std::mktime(&val_tm);
@@ -86,10 +88,10 @@ bool Schedule::Task::set_time_start_end(std::tm val_tm)
 	return true;
 }
 
-std::tm Schedule::Task::get_time_end() {
+std::tm Task::get_time_end() {
 	return time_end;
 }
 
-std::tm Schedule::Task::get_time_start() {
+std::tm Task::get_time_start() {
 	return time_start;
 }

@@ -1,13 +1,13 @@
 #include "schedule.hpp"
 
 Schedule::Schedule(json init_val, std::string logovo) {
-	Schedule::Util::create_name_log_file(logovo);
+	Util::create_name_log_file(logovo);
 	name = static_cast<std::string>(init_val[u8"Имя"]);
-	date_plan = Schedule::Util::dt_from_json(init_val[u8"ДатаПлана"]);
+	date_plan = Util::dt_from_json(init_val[u8"ДатаПлана"]);
 	json tasks_json = init_val[u8"Операции"];
 
 	for (json task_json : tasks_json) {
-		std::shared_ptr<Schedule::Task> _task = std::make_shared<Schedule::Task>(task_json);
+		std::shared_ptr<Task> _task = std::make_shared<Task>(task_json);
 		auto key = _task->get_key();
 		tasks_map[key] = _task;
 	}
@@ -23,7 +23,7 @@ Schedule::~Schedule() {
 
 
 void Schedule::execute_processing() {
-	std::vector<std::shared_ptr<Schedule::TaskAndType>> not_prev_TATS = tasks_not_prev();
+	std::vector<std::shared_ptr<TaskAndType>> not_prev_TATS = tasks_not_prev();
 	tree_fill_time(not_prev_TATS);
 	process_with_the_dextra_algorithm();
 }
@@ -43,7 +43,7 @@ void Schedule::link_elements(map_tasks s_tasks)
 	}
 }
 
-std::vector<std::shared_ptr<Schedule::TaskAndType>> Schedule::tasks_not_prev() {
+std::vector<std::shared_ptr<TaskAndType>> Schedule::tasks_not_prev() {
 	std::vector <std::shared_ptr<TaskAndType>> tasks_ret;
 	for (auto task_map : tasks_map) {
 		if (task_map.second->its_not_prev_task()){
@@ -57,10 +57,10 @@ std::vector<std::shared_ptr<Schedule::TaskAndType>> Schedule::tasks_not_prev() {
 	return tasks_ret;
 }
 
-void Schedule::tree_fill_time(std::vector<std::shared_ptr<Schedule::TaskAndType>> s_tasks) {
-	std::vector<std::shared_ptr<Schedule::TaskAndType>> tasks(s_tasks);
-	uint count = tasks.size();
-	uint index = 0;
+void Schedule::tree_fill_time(std::vector<std::shared_ptr<TaskAndType>> s_tasks) {
+	std::vector<std::shared_ptr<TaskAndType>> tasks(s_tasks);
+	unsigned int count = tasks.size();
+	unsigned int index = 0;
 	while (count > index)
 	{
 		auto task = tasks[index]->task;
@@ -75,7 +75,7 @@ void Schedule::tree_fill_time(std::vector<std::shared_ptr<Schedule::TaskAndType>
 			auto time_end_this = std::mktime(&(task->get_time_end()));
 			if (time_start_follow == -1 && time_end_this == -1)
 			{
-				Schedule::Util::write_in_log("Key: " + task->get_key() + " : Empty date comparison detected, probably an error - contact the developer." + ": follower : " + task_follow->task->get_key());
+				Util::write_in_log("Key: " + task->get_key() + " : Empty date comparison detected, probably an error - contact the developer." + ": follower : " + task_follow->task->get_key());
 			}
 			if (itr_find == tasks.end() && task_follow->type_bond == TypeBond::finish_start && time_start_follow < time_end_this) {
 				tasks.push_back(task_follow);
