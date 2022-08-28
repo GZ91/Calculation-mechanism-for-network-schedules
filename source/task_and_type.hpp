@@ -4,11 +4,10 @@
 
 class Task;
 
-enum TypeBond { finish_start = 0, start_start = 1, start_finish = 2, finish_finish = 3 };
+enum class TypeBond { finish_start = 0, start_start = 1, start_finish = 2, finish_finish = 3 };
 
 struct TaskAndType {
-	std::shared_ptr<Task> task;
 	TypeBond type_bond;
-	std::string key_task;
-	std::tm date_for_write;
+	unsigned long long key_task;
+	std::time_t date_for_write;
 };

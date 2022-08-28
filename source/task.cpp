@@ -4,17 +4,17 @@
 
 Task::Task(json& task_json)
 {
-	lendth = static_cast<unsigned int>(task_json[u8"ДлитВМин"]);
+	unsigned int lendth = static_cast<unsigned int>(task_json[u8"ДлитВМин"]);
 	second_lendth = static_cast<std::time_t>(lendth * 60);
-	ID = static_cast<std::string>(task_json[u8"КодОп"]);
+	ID = stoull(static_cast<std::string>(task_json[u8"КодОп"]));
 	key_calendate = static_cast<std::string>(task_json[u8"КодКалендаря"]);
 	NestingLevel = static_cast<unsigned int>(task_json[u8"УрВлож"]);
 	unsigned int sum_int = static_cast<unsigned int>(task_json[u8"Сум"]);
 	sum = static_cast<bool>(sum_int);
 	linkage_upload(task_json[u8"Связи"]);
-	minimum_time_start_fact = Util::dt_from_json(task_json[u8"МинФакт"]);
-	maximum_time_end_fact = Util::dt_from_json(task_json[u8"МаксФакт"]);
-	begin_NRCH = Util::dt_from_json(task_json[u8"НачалоНРЧ"]);
+	minimum_time_start_fact = Util::time_t_from_json(task_json[u8"МинФакт"]);
+	maximum_time_end_fact = Util::time_t_from_json(task_json[u8"МаксФакт"]);
+	begin_NRCH = Util::time_t_from_json(task_json[u8"НачалоНРЧ"]);
 }
 
 Task::~Task() {
@@ -23,7 +23,7 @@ Task::~Task() {
 void Task::linkage_upload(json links) {
 	for (auto link : links)
 	{
-		std::string key_prev = static_cast<std::string>(link[u8"КодПредш"]);
+		unsigned long long key_prev = stoull(static_cast<std::string>(link[u8"КодПредш"]));
 		auto predec = std::make_shared<TaskAndType>();
 		predec->key_task = key_prev;
 		predec->type_bond = link[u8"ВидСвязи"].is_null() ? static_cast<TypeBond>(0) : static_cast<TypeBond>(static_cast<unsigned int>(link[u8"ВидСвязи"])); //получаю из числа вид связи
@@ -39,13 +39,13 @@ std::vector <std::shared_ptr<TaskAndType>>& Task::get_followers() {
 	return followers;
 };
 
-std::string Task::get_key()
+unsigned long long Task::get_key()
 {
 	return ID;
 }
 
 void Task::print_error(std::string text_error, int type_error) {
-	Util::write_in_log("Key: " + get_key() + " :" + text_error, type_error);
+	Util::write_in_log("Key: " + std::to_string(get_key()) + " :" + text_error, type_error);
 }
 
 void Task::add_followers(std::shared_ptr<TaskAndType> task) {
@@ -56,24 +56,24 @@ bool Task::its_not_prev_task() {
 	return predecessors.empty();
 }
 
-bool Task::set_time_start_end(std::tm val_tm)
+bool Task::set_time_start_end(std::time_t val_tm)
 {
 
-	std::time_t mval_tm = std::mktime(&val_tm);
-	std::time_t mtime_start = std::mktime(&time_start);
+	std::time_t mval_tm = val_tm;
+	std::time_t mtime_start = second_start;
 	if (mval_tm < mtime_start) return false; //если дата начала больше даты пришедшей, то отмена, т.к. дальнейший расчет по данному элементу и его последователям не нужен.
 
-	std::time_t mtime_end = std::mktime(&time_end);
+	std::time_t mtime_end = second_end;
 
-	std::time_t mminimum_time_start = std::mktime(&minimum_time_start_fact);
-	std::time_t mmaximum_time_end = std::mktime(&maximum_time_end_fact);
+	std::time_t mminimum_time_start = minimum_time_start_fact;
+	std::time_t mmaximum_time_end = maximum_time_end_fact;
 
 
 	std::time_t time_start_quest = std::max(mval_tm, mtime_start);
 	std::time_t time_start_rec = std::max(time_start_quest, mminimum_time_start);
 
 
-	std::time_t time_end_quest = std::max(time_start_rec + static_cast<time_t>(lendth * 60), mtime_end);
+	std::time_t time_end_quest = std::max(time_start_rec + second_lendth, mtime_end);
 	std::time_t time_end_rec = std::max(time_end_quest, mmaximum_time_end);
 	if (mmaximum_time_end != -1 && mmaximum_time_end < time_end_rec)
 	{
@@ -83,15 +83,13 @@ bool Task::set_time_start_end(std::tm val_tm)
 	second_start = time_start_rec;
 	second_end = time_end_rec;
 
-	time_start = *std::localtime(&time_start_rec);
-	time_end = *std::localtime(&time_end_rec);
 	return true;
 }
 
-std::tm Task::get_time_end() {
-	return time_end;
+std::time_t Task::get_time_end() {
+	return second_end;
 }
 
-std::tm Task::get_time_start() {
-	return time_start;
+std::time_t Task::get_time_start() {
+	return second_start;
 }

@@ -1,6 +1,6 @@
 #include "util.hpp"
 
-std::string Util::name_log_file = "";
+std::string name_log_file = "";
 
 std::tm Util::dt_from_str(std::string str)
 {
@@ -18,6 +18,12 @@ std::tm Util::dt_from_json(json val)
 	return dt_from_str(static_cast<std::string>(val));
 }
 
+std::time_t Util::time_t_from_json(json val) {
+	if (val.is_null()) return time(0);
+	auto dt = dt_from_str(static_cast<std::string>(val));
+	return mktime(&dt);
+}
+
 std::chrono::milliseconds Util::time_measurement(void (*method)()) {
 	auto start = std::chrono::high_resolution_clock::now();
 	method();
@@ -26,7 +32,7 @@ std::chrono::milliseconds Util::time_measurement(void (*method)()) {
 }
 
 void Util::write_in_log(std::string text_log, int type_error) {
-	std::fstream log_f(name_log_file, std::ios::app);
+	std::fstream log_f(Util::name_log_file, std::ios::app);
 	time_t seconds = time(NULL);
 	tm* timeinfo = localtime(&seconds);
 	std::string end = "";

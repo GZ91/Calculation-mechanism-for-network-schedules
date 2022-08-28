@@ -10,7 +10,7 @@
 #include "util.hpp"
 
 using json = nlohmann::json;
-using map_tasks = std::map<std::string, std::shared_ptr<Task>>;
+using map_tasks = std::map<unsigned long long, std::shared_ptr<Task>>;
 
 class Schedule
 {
@@ -24,10 +24,8 @@ private:
 		
 	map_tasks tasks_map;
 	std::string name;
-	std::tm date_plan;
-	std::tm dt_from_str(std::string);
-	std::tm dt_from_json(json);
-	void Schedule::link_elements(map_tasks);
+	std::time_t date_plan;
+	void Schedule::link_elements(map_tasks, std::vector<std::vector<bool>>);
 	std::vector<std::shared_ptr<TaskAndType>> tasks_not_prev();
 	void process_with_the_dextra_algorithm();
 	void tree_fill_time(std::vector<std::shared_ptr<TaskAndType>>);

@@ -2,7 +2,7 @@
 
 
 void test_function() {
-	std::ifstream f("..\\..\\..\\resource.json");
+	std::ifstream f("..\\..\\..\\resource_big.json");
 	if (f.fail()) exit(1); //Если файл не найден
 	json data = json::parse(f);
 	f.close();
