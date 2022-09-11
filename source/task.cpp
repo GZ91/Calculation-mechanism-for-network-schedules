@@ -56,9 +56,37 @@ bool Task::its_not_prev_task() {
 	return predecessors.empty();
 }
 
-bool Task::set_time_start_end(std::time_t val_tm)
+bool Task::set_time_end_start(std::time_t val_tm)
 {
 
+	std::time_t mval_tm = val_tm;
+	std::time_t mtime_start = second_start;
+	if (mval_tm < mtime_start) return false; //если дата начала больше даты пришедшей, то отмена, т.к. дальнейший расчет по данному элементу и его последователям не нужен.
+
+	std::time_t mtime_end = second_end;
+
+	std::time_t mminimum_time_start = minimum_time_start_fact;
+	std::time_t mmaximum_time_end = maximum_time_end_fact;
+
+
+	std::time_t time_start_quest = std::max(mval_tm, mtime_start);
+	std::time_t time_start_rec = std::max(time_start_quest, mminimum_time_start);
+
+
+	std::time_t time_end_quest = std::max(time_start_rec + second_lendth, mtime_end);
+	std::time_t time_end_rec = std::max(time_end_quest, mmaximum_time_end);
+	if (mmaximum_time_end != -1 && mmaximum_time_end < time_end_rec)
+	{
+		Util::write_in_log("Exceeding the maximum late execution period. Task: " + ID);
+	}
+
+	second_start = time_start_rec;
+	second_end = time_end_rec;
+
+	return true;
+}
+
+bool Task::set_time_start_start(std::time_t val_tm) {
 	std::time_t mval_tm = val_tm;
 	std::time_t mtime_start = second_start;
 	if (mval_tm < mtime_start) return false; //если дата начала больше даты пришедшей, то отмена, т.к. дальнейший расчет по данному элементу и его последователям не нужен.

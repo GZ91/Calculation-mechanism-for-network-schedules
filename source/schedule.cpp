@@ -15,17 +15,17 @@ Schedule::Schedule(json init_val, std::string logovo) {
 			max_key = key;
 		}
 	}
-	std::vector<std::vector<bool>> matrix_adjacency_prev;
+	
 	
 	for (unsigned long long i = 0; i <= max_key; ++i) {
-		std::vector<bool> m;
+		std::vector<int> m;
 		for (unsigned long long y = 0; y <= max_key; ++y) {
-			m.push_back(false);
+			m.push_back(0);
 		}
 		matrix_adjacency_prev.push_back(m);
 	}
 
-	link_elements(tasks_map, matrix_adjacency_prev);
+	link_elements(tasks_map);
 }
 
 Schedule::~Schedule() {
@@ -35,19 +35,18 @@ Schedule::~Schedule() {
 	}
 }
 
-
 void Schedule::execute_processing() {
 	std::vector<std::shared_ptr<TaskAndType>> not_prev_TATS = tasks_not_prev();
 	tree_fill_time(not_prev_TATS);
 	process_with_the_dextra_algorithm();
 }
 
-void Schedule::link_elements(map_tasks s_tasks, std::vector<std::vector<bool>> matrix_adjacency_prev)
+void Schedule::link_elements(map_tasks s_tasks)
 {
 	for (auto task_map : s_tasks) {
 		auto predecessors = task_map.second->get_predecessors();
 		for (auto& predecessor : predecessors) {
-			matrix_adjacency_prev[task_map.first][predecessor->key_task] = true;
+			matrix_adjacency_prev[task_map.first][predecessor->key_task] = 1; // 1 = связь окончание_начало
 			auto TAT = std::make_shared<TaskAndType>();
 			TAT->key_task = task_map.first;
 			TAT->type_bond = predecessor->type_bond;
@@ -61,10 +60,9 @@ std::vector<std::shared_ptr<TaskAndType>> Schedule::tasks_not_prev() {
 	for (auto task_map : tasks_map) {
 		if (task_map.second->its_not_prev_task()){
 			std::shared_ptr<TaskAndType> T = std::make_shared<TaskAndType>();
-			//T->task = task_map.second;
-			T->key_task = task_map.first;
-			T->type_bond = TypeBond::finish_start;
-			T->date_for_write = date_plan;
+			T->key_task = task_map.first; 
+			T->type_bond = TypeBond::finish_start; // заменить на нормальное считывание типа связи
+			T->date_end_for_write = date_plan;
 			tasks_ret.push_back(T);
 		}
 	}
@@ -78,16 +76,20 @@ void Schedule::tree_fill_time(std::vector<std::shared_ptr<TaskAndType>> s_tasks)
 	while (count > index)
 	{
 		auto task = tasks_map[tasks[index]->key_task];
-		if (tasks[index]->type_bond == TypeBond::finish_start && !task->set_time_start_end(tasks[index]->date_for_write)) {
+		if (tasks[index]->type_bond == TypeBond::finish_start && !task->set_time_end_start(tasks[index]->date_end_for_write)) {
 			++index;
 			continue;
 		}
+		// методы обработки других связей должны быть здесь
+
 		std::vector<std::shared_ptr<TaskAndType>> followers_(task->get_followers());
 		for (auto task_follow : followers_) {
-			auto itr_find = std::find(tasks.begin(), tasks.end(), task_follow);
+			auto itr_find = std::find(tasks.begin() + index, tasks.end(), task_follow);
 			auto time_start_follow = tasks_map[task_follow->key_task]->get_time_start();
 			auto time_end_this = tasks_map[task_follow->key_task]->get_time_end();
-			if (time_start_follow == -1 && time_end_this == -1)
+			task_follow->date_end_for_write = task->get_time_end();
+			task_follow->date_start_for_write = task->get_time_start();
+			if (time_start_follow == -1 && time_end_this == -1) //проверка на ошибку дат
 			{
 				std::string tmp = "";
 				tmp += "Key: ";
@@ -96,7 +98,7 @@ void Schedule::tree_fill_time(std::vector<std::shared_ptr<TaskAndType>> s_tasks)
 				tmp += tasks_map[task_follow->key_task]->get_key();
 				Util::write_in_log(tmp);
 			}
-			if (itr_find == tasks.end() && task_follow->type_bond == TypeBond::finish_start && time_start_follow < time_end_this) {
+			if (itr_find == tasks.end() &&  time_start_follow < time_end_this) {//
 				tasks.push_back(task_follow);
 				count++;
 			}
